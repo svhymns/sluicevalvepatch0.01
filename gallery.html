@@ -264,6 +264,36 @@
         paymentLink: "https://buy.stripe.com/8x228q77jfxZdbJ4Omdby01"
       },
     ];
+    // Slideshow logic
+    let currentIdx = 0;
+    const modal = document.getElementById('slideshowModal');
+    const img = document.getElementById('slideshowImg');
+    const details = document.getElementById('slideshowDetails');
+
+    function showSlide(idx) {
+      currentIdx = (idx + artworks.length) % artworks.length;
+      const art = artworks[currentIdx];
+      img.src = art.img;
+      img.alt = art.title;
+      details.innerHTML = `
+  <div class="title">${art.title}</div>
+  <div class="desc">${art.desc}</div>
+  <div class="price">${art.price}</div>
+  ${art.paymentLink ? `<a href="${art.paymentLink}" target="_blank" style="display:inline-block;margin-top:8px;padding:4px 12px;background:blue;color:#fff;border:none;border-radius:3px;margin-top:30px;text-decoration:none;font-size:0.9em;">Buy</a>` : ""}
+`;
+    }
+
+    function openSlideshow(idx) {
+      modal.classList.add('active');
+      showSlide(idx);
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSlideshow() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
     // Render gallery
     const gallery = document.getElementById('gallery');
     artworks.forEach((art, idx) => {
@@ -280,32 +310,6 @@
       gallery.appendChild(container);
     });
 
-    // Slideshow logic
-    let currentIdx = 0;
-    const modal = document.getElementById('slideshowModal');
-    const img = document.getElementById('slideshowImg');
-    const details = document.getElementById('slideshowDetails');
-    function showSlide(idx) {
-      currentIdx = (idx + artworks.length) % artworks.length;
-      const art = artworks[currentIdx];
-      img.src = art.img;
-      img.alt = art.title;
-      details.innerHTML = `
-  <div class="title">${art.title}</div>
-  <div class="desc">${art.desc}</div>
-  <div class="price">${art.price}</div>
-  ${art.paymentLink ? `<a href="${art.paymentLink}" target="_blank" style="display:inline-block;margin-top:8px;padding:4px 12px;background:blue;color:#fff;border:none;border-radius:3px;margin-top:30px;text-decoration:none;font-size:0.9em;">Buy</a>` : ""}
-`;
-    }
-    function openSlideshow(idx) {
-      modal.classList.add('active');
-      showSlide(idx);
-      document.body.style.overflow = 'hidden';
-    }
-    function closeSlideshow() {
-      modal.classList.remove('active');
-      document.body.style.overflow = '';
-    }
     document.getElementById('closeSlideshow').onclick = closeSlideshow;
     document.getElementById('prevBtn').onclick = () => showSlide(currentIdx - 1);
     document.getElementById('nextBtn').onclick = () => showSlide(currentIdx + 1);
@@ -318,28 +322,6 @@
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeSlideshow();
     });
-  </script>
-  <!-- Footer image, only visible in gallery mode -->
-  <script>
-    // Hide footer image in slideshow mode, show in gallery mode
-    const footerImage = document.getElementById('footerImage');
-    const slideshowModal = document.getElementById('slideshowModal');
-    function showFooterInGalleryMode(show) {
-      footerImage.style.display = show ? 'block' : 'none';
-    }
-    // Patch openSlideshow and closeSlideshow to toggle footer
-    const origOpenSlideshow = openSlideshow;
-    const origCloseSlideshow = closeSlideshow;
-    openSlideshow = function(idx) {
-      showFooterInGalleryMode(false);
-      origOpenSlideshow(idx);
-    };
-    closeSlideshow = function() {
-      origCloseSlideshow();
-      showFooterInGalleryMode(true);
-    };
-    // Show footer on initial load
-    showFooterInGalleryMode(true);
   </script>
 </body>
 </html>
